@@ -72,6 +72,7 @@ int	ft_printf(const char * restrict format, ...)
 		{
 			i = va_arg(arg, int);
 			ft_putchar(i);
+			traverse++;
 		}
 		if (*traverse == 'd' || *traverse == 'i')
 		{
@@ -82,8 +83,13 @@ int	ft_printf(const char * restrict format, ...)
 				ft_putchar('-');
 			}
 			ft_putnbr(i);
+			traverse++;
 		}
-		traverse++;
+		if (*traverse == '\n')
+		{
+			ft_putchar('\n');
+			traverse++;
+		}
 	}
 	va_end(arg);
 	return (0);
@@ -93,8 +99,8 @@ int main()
 {
 	char a = 'p';
 	int b = 1234;
-	ft_printf("%c %d", a, b);
-	printf("%c %d", a, b);
+	ft_printf("%c\n%d\n", a, b);
+	printf("%c\n%d\n", a, b);
 //	ft_printf("%d", b);
 	return (0);
 }
