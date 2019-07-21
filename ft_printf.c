@@ -23,9 +23,9 @@ void	ft_putnbr(int nb)
 {
 	char i;
 
-	if (nb == -2147483648)
-		ft_putchar('-2147483648');
-	else if (nb >= 0 && nb <= 9)
+//	if (nb == -2147483648)
+//		ft_putchar("-2147483648");
+	if (nb >= 0 && nb <= 9)
 		ft_putchar(nb + '0');
 	else if (nb < 0)
 	{
@@ -58,7 +58,7 @@ int	ft_printf(const char * restrict format, ...)
 
 	va_list arg;
 	va_start(arg, format);
-	traverse = (char *)format;
+	traverse = format;
 	while (*traverse != '\0')
 	{
 		if (*traverse != '%')
@@ -66,14 +66,14 @@ int	ft_printf(const char * restrict format, ...)
 			ft_putchar(*traverse);
 			traverse++;
 		}
-		traverse++;
+		if (*traverse == '%')
+			traverse++;
 		if (*traverse == 'c')
 		{
 			i = va_arg(arg, int);
 			ft_putchar(i);
-			exit (0);
 		}
-		else if (*traverse == 'd' || *traverse == 'i')
+		if (*traverse == 'd' || *traverse == 'i')
 		{
 			i = va_arg(arg, int);
 			if (i < 0)
@@ -82,9 +82,8 @@ int	ft_printf(const char * restrict format, ...)
 				ft_putchar('-');
 			}
 			ft_putnbr(i);
-			exit (0);
 		}
-		(*traverse)++;
+		traverse++;
 	}
 	va_end(arg);
 	return (0);
@@ -94,8 +93,8 @@ int main()
 {
 	char a = 'p';
 	int b = 1234;
-	ft_printf("%c", a);
-	printf("%c", a);
-	ft_printf("%d", b);
+	ft_printf("%c %d", a, b);
+	printf("%c %d", a, b);
+//	ft_printf("%d", b);
 	return (0);
 }
