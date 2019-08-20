@@ -53,37 +53,40 @@ void	ft_putnbr(int nb)
 int	ft_printf(const char * restrict format, ...)
 {
 	char *traverse;
-	unsigned int i;
+	int i;
 	char *s;
 
 	va_list arg;
 	va_start(arg, format);
-	traverse = format;
+	traverse = (char *)format;
 	while (*traverse != '\0')
 	{
-		if (*traverse != '%')
-		{
-			ft_putchar(*traverse);
-			traverse++;
-		}
+		write (1, &(*traverse), 1);
+		traverse++;
 		if (*traverse == '%')
-			traverse++;
-		if (*traverse == 'c')
 		{
-			i = va_arg(arg, int);
-			ft_putchar(i);
 			traverse++;
-		}
-		if (*traverse == 'd' || *traverse == 'i')
-		{
-			i = va_arg(arg, int);
-			if (i < 0)
+			if (traverse == 'c')
 			{
-				i = -i;
-				ft_putchar('-');
+				i = va_arg(arg, int);
+				ft_putchar(i);
+				traverse++;
 			}
-			ft_putnbr(i);
-			traverse++;
+			else if (*traverse == 'd' || *traverse == 'i')
+			{
+				i = va_arg(arg, int);
+				if (i < 0)
+				{
+					i = -i;
+					ft_putchar('-');
+				}
+				ft_putnbr(i);
+				traverse++;
+			}
+			else if (*traverse == 'f')
+			{
+
+			}
 		}
 		if (*traverse == '\n')
 		{
@@ -98,9 +101,9 @@ int	ft_printf(const char * restrict format, ...)
 int main()
 {
 	char a = 'p';
-	int b = 1234;
-	ft_printf("%c\n%d\n", a, b);
-	printf("%c\n%d\n", a, b);
+	int b = 12345;
+	ft_printf("Hi %i JJ\n", b);
+	printf("Hi %10d JJ\n", b);
 //	ft_printf("%d", b);
 	return (0);
 }

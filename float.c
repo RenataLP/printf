@@ -13,150 +13,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "libft/libft.h"
-
-int		ft_power(int nb, int power)
-{
-	if (power == 0)
-		return (1);
-	else if (power < 0)
-		return (0);
-	return (nb * ft_power(nb, power - 1));
-}
-
-int	ft_atoi(const char *str)
-{
-	int					sign;
-	unsigned long long	num;
-
-	sign = 1;
-	num = 0;
-	while (*str == ' ' || *str == '\n' || *str == '\t' ||
-			*str == '\v' || *str == '\f' || *str == '\r')
-		str++;
-	if (*str == '-')
-	{
-		sign = -1;
-		str++;
-	}
-	else if (*str == '+')
-		str++;
-	while ((*str >= 48 && *str <= 57) && *str)
-	{
-		num = num * 10 + (*str - '0');
-		str++;
-	}
-	if (num > 9223372036854775807)
-		return (sign == -1 ? 0 : -1);
-	return (num * sign);
-}
-
-static int	convert_and_check_nb(char c, int base)
-{
-	int		result;
-
-	if (c >= '0' && c <= '9')
-		result = c - 48;
-	else if (c >= 'a' && c <= 'z')
-		result = c - 97 + 10;
-	else if (c >= 'A' && c <= 'Z')
-		result = c - 65 + 10;
-	else
-		result = -1;
-	if (result < base && result != -1)
-		return (result);
-	else
-		return (-1);
-}
-
-static int	length_number(char *str, int base)
-{
-	int		length;
-
-	length = 0;
-	while (str[length])
-	{
-		if (convert_and_check_nb(str[length], base) == -1)
-			break ;
-		length++;
-	}
-	return (length);
-}
-
-int			ft_atoi_base(char *nb, int base)
-{
-	int		result;
-	int		length;
-
-	if (base == 10)
-		return (ft_atoi(nb));
-	while (*nb == ' ' || *nb == '\t' || *nb == '\n'
-			|| *nb == '\v' || *nb == '\r' || *nb == '\f')
-		nb++;
-	result = 0;
-	length = length_number(nb, base) - 1;
-	while (*nb && length >= 0 && convert_and_check_nb(*nb, base) != -1)
-	{
-		result += convert_and_check_nb(*nb, base) * ft_power(base, length);
-		nb++;
-		length--;
-	}
-	return (result);
-}
-
-static size_t	digit_count(long nb, int base)
-{
-	size_t		i;
-
-	i = 0;
-	while (nb)
-	{
-		nb /= base;
-		i++;
-	}
-	return (i);
-}
-
-char			*ft_itoa_base(int value, int base)
-{
-	char	*ret;
-	char	*tab_base;
-	int		taille;
-	int		i;
-	int		sign;
-
-	if (base < 2 || base > 16)
-		return (0);
-	if (base == 10 && value == -2147483648)
-		return ("-2147483648");
-	sign = 0;
-	if (base == 10 && value < 0)
-		sign = 1;
-	if (value < 0)
-		value = -value;
-	if (value == 0)
-		return ("0");
-	tab_base = (char *)malloc(sizeof(char) * 17);
-	tab_base = "0123456789ABCDEF";
-	taille = digit_count(value, base);
-	taille += (sign ? 1 : 0);
-	ret = (char *)malloc(sizeof(char) * (taille + 1));
-	i = 1;
-	sign ? (ret[0] = '-') : 0;
-	while (value != 0)
-	{
-		ret[taille - i++] = tab_base[value % base];
-		value /= base;
-	}
-	ret[taille] = '\0';
-	return (ret);
-}
+#include "ft_printf.h"
 
 int ft_exp(const char *str)
 {
 	int i;
 	int j;
 	char *exp;
-	int exp_ten;//change type
+	int exp_ten;
 
 	i = 1;
 	j = 0;
@@ -166,28 +30,106 @@ int ft_exp(const char *str)
 		exp[j++] = str[i++];
 	exp[j] = '\0';
 	exp_ten = ft_atoi(ft_itoa_base(ft_atoi_base(exp,2), 10));
-	printf("%d\n", exp_ten);
-	return (exp_ten);
+	return (exp_ten - 1023);
 }
 
-int
+int ft_get_integer(int *str, int exp, char **s)
+{
+	int i;
+	int j;
+	long int num;
+	int two;
 
-int ft_mantissa(const char *str)
+	i = exp;
+	j = 0;
+	num = 0;
+	two = 2;
+	while (i >= 0 && j <= exp)
+	{
+		num = num + ft_power(two, i)*str[j];
+		i--;
+		j++;
+	}
+	printf("this is integer %ld\n", num);
+	return (num);
+}
+
+char *ft_convert_integer_to_string(long int num, char **s)
+{
+	int nb;
+	int j;
+	char *integer;
+
+	nb = num;
+	while (nb / 10 > 0)
+		j++;
+	if (!(integer = (char *)malloc(sizeof(char) * (j + 1))))
+		return (0);
+	integer = ft_itoa(num);
+	return (integer);
+}
+
+char	*ft_get_decimals(int *str, int exp, int precision, char **s)
+{
+	int i;
+	int j;
+	long int num;
+	double num_d;
+	int two;
+	int ten;
+
+	i = 1;
+	j = exp + 1;
+	num_d = 0.0;
+	num = 0;
+	two = 2;
+	ten = 10;
+	while (i < 53 - exp)
+	{
+		num_d = num_d + (double)(str[j])/(double)(ft_power(two, i));
+		i++;
+		j++;
+	}
+	num = ((double)(num_d*ft_power(ten, precision))+0.5);
+	printf("this is decimals %ld\n", num);
+//	ft_convert_decimals_to_string(num, precision);
+	return (ft_itoa(num));
+}
+
+//char *ft_convert_decimals_to_string(long int num, int precision)
+//{
+//	char *str;
+//
+//	if (!(str = (char *)malloc(sizeof(char) * (precision + 1))))
+//		return (0);
+//	str = ft_itoa(num);
+//	return (str);
+//}
+
+int ft_mantissa(const char *str, int precision)
 {
 	int i;
 	int j;
 	int *mantissa;
 	int mantissa_ten;
+	int exp;
+	int len;
+	char *s;
 
 	i = 12;
-	j = 0;
-	if (!(mantissa = (int *)malloc(sizeof(int) * 52)))
+	j = 1;
+	exp = ft_exp(str);
+	if (!(mantissa = (int *)malloc(sizeof(int) * 53)))
 		return (0);
+	mantissa[0] = 1;
 	while (str[i] != 0)
 		mantissa[j++] = str[i++] - 48;
+	ft_get_integer(mantissa, exp, &s);
+	ft_get_decimals(mantissa, exp, precision, &s);
+	return (0);
 }
 
-void	ft_float(double nb)
+void	ft_float(double nb, int precision)
 {
 	unsigned char *p;
 	int i;
@@ -214,14 +156,17 @@ void	ft_float(double nb)
 		i++;
 	}
 	ft_exp(str);
-	ft_mantissa(str);
+	ft_mantissa(str, precision);
 	printf("%s\n", str);
 }
 
 int main()
 {
 	double nb;
+	int precision;
 
-	nb = 8.9574629480;
-	ft_float(nb);
+	nb = 5.995544;
+	precision = 10;
+	printf("%.10f\n", nb);
+	ft_float(nb, precision);
 }
