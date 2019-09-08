@@ -30,90 +30,147 @@ int ft_exp(const char *str)
 		exp[j++] = str[i++];
 	exp[j] = '\0';
 	exp_ten = ft_atoi(ft_itoa_base(ft_atoi_base(exp,2), 10));
+	printf("%d\n", exp_ten);
 	return (exp_ten - 1023);
+}
+
+//int ft_get_integer_2(int *str, int exp, int *mas_int)
+//{
+//	int mas[5000];
+//	int i;
+//
+//	i = 0;
+//	while (exp > 0)
+//	{
+//
+//		i++;
+//	}
+//}
+
+int ft_get_int(int **integer, int *str, int exp)
+{
+	int j;
+	int sum[5000];
+	int i;
+	int res;
+
+	j = 0;
+	res = 0;
+	while (i < 5000)
+		sum[i++] = 0;// check
+	while (j <= exp - 1023)
+	{
+		i = 0;
+		if (str[j] == 0)
+			j++;
+		while (integer[j][i] != 0 || integer[j][i + 1] != 0)
+			sum[i] += integer[j][i];
+		i = 0;
+		while (integer[j][i] != 0 || integer[j][i + 1] != 0)
+		{
+			if (sum[i] > 9)
+			{
+				res = sum[i];
+				sum[i] %= 10;
+				sum[i + 1] += res / 10;
+			}
+			j++;
+		}
+	}
 }
 
 int ft_get_integer(int *str, int exp, char **s)
 {
-	int i;
+	int mas_int[5000];
+	int **integ;
 	int j;
-	long int num;
-	int two;
+	int i;
+	int res;
 
-	i = exp;
 	j = 0;
-	num = 0;
-	two = 2;
-	while (i >= 0 && j <= exp)
-	{
-		num = num + ft_power(two, i)*str[j];
-		i--;
-		j++;
-	}
-	printf("this is integer %ld\n", num);
-	return (num);
-}
-
-char *ft_convert_integer_to_string(long int num, char **s)
-{
-	int nb;
-	int j;
-	char *integer;
-
-	nb = num;
-	while (nb / 10 > 0)
-		j++;
-	if (!(integer = (char *)malloc(sizeof(char) * (j + 1))))
+	i = exp;
+	while (j < 5000)
+		mas_int[j++] = 0;
+	res = 0;
+	mas_int[0] = 1;
+	if (!(integ = (int **)malloc(sizeof(int *) * (exp - 1023))))
 		return (0);
-	integer = ft_itoa(num);
-	return (integer);
-}
-
-char	*ft_get_decimals(int *str, int exp, int precision, char **s)
-{
-	int i;
-	int j;
-	long int num;
-	double num_d;
-	int two;
-	int ten;
-
-	i = 1;
-	j = exp + 1;
-	num_d = 0.0;
-	num = 0;
-	two = 2;
-	ten = 10;
-	while (i < 53 - exp)
+	while (i > 0)
 	{
-		num_d = num_d + (double)(str[j])/(double)(ft_power(two, i));
-		i++;
-		j++;
+		if (!(integ[i] = (int *)malloc(sizeof(int) * 5000)))
+			return (0);
+		j = 0;
+		while (mas_int[j] != 0 || mas_int[j + 1] != 0)
+			mas_int[j++] *= 2;
+		j = 0;
+		while (mas_int[j] != 0 || mas_int[j + 1] != 0)
+		{
+			if (mas_int[j] > 9)
+			{
+				res = mas_int[j];
+				mas_int[j] %= 10;
+				mas_int[j + 1] += res / 10;
+			}
+			j++;
+		}
+		integ[i][0] = 1;
+		while (j > 0)
+			integ[i--][j] = mas_int[j--];
+		j = 0;//удалить
+		while (j < 99)//удалить
+			printf("%d", mas_int[j++]);
+		//i--;//оставить все остальное убрать
+		printf("\n");//удалить
 	}
-	num = ((double)(num_d*ft_power(ten, precision))+0.5);
-	printf("this is decimals %ld\n", num);
-//	ft_convert_decimals_to_string(num, precision);
-	return (ft_itoa(num));
+	ft_get_int(integ, str, exp);
+	return (0);
 }
 
-//char *ft_convert_decimals_to_string(long int num, int precision)
-//{
-//	char *str;
-//
-//	if (!(str = (char *)malloc(sizeof(char) * (precision + 1))))
-//		return (0);
-//	str = ft_itoa(num);
-//	return (str);
-//}
+int	ft_get_decimals(int *str, int precision, char **s)
+{
+	int mas_dec[5000];
+	int j;
+	int i;
+	int res;
+
+	j = 0;
+	i = precision;
+	while (j < 5000)
+		mas_dec[j++] = 0;
+	res = 0;
+	mas_dec[0] = 1;
+	while (i > 0)
+	{
+		j = 0;
+		while (mas_dec[j] != 0 || mas_dec[j + 1] != 0)
+			mas_dec[j++] *= 5;
+		j = 0;
+		while (mas_dec[j] != 0 || mas_dec[j + 1] != 0)
+		{
+			if (mas_dec[j] > 9)
+			{
+				res = mas_dec[j];
+				mas_dec[j] %= 10;
+				mas_dec[j + 1] += res / 10;
+			}
+			j++;
+		}
+
+		j = 0;
+		while (j < 99)
+			printf("%d", mas_dec[j++]);
+		i--;//оставить все остальное убрать
+		printf("\n");
+	}
+		return (0);
+}
 
 int ft_mantissa(const char *str, int precision)
 {
 	int i;
 	int j;
 	int *mantissa;
-	int mantissa_ten;
 	int exp;
-	int len;
 	char *s;
 
 	i = 12;
@@ -125,7 +182,7 @@ int ft_mantissa(const char *str, int precision)
 	while (str[i] != 0)
 		mantissa[j++] = str[i++] - 48;
 	ft_get_integer(mantissa, exp, &s);
-	ft_get_decimals(mantissa, exp, precision, &s);
+	ft_get_decimals(mantissa, precision, &s);
 	return (0);
 }
 
@@ -157,7 +214,7 @@ void	ft_float(double nb, int precision)
 	}
 	ft_exp(str);
 	ft_mantissa(str, precision);
-	printf("%s\n", str);
+//	printf("%s\n", str);
 }
 
 int main()
@@ -165,7 +222,7 @@ int main()
 	double nb;
 	int precision;
 
-	nb = 5.995544;
+	nb = 10.995544;
 	precision = 10;
 	printf("%.10f\n", nb);
 	ft_float(nb, precision);
