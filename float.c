@@ -15,6 +15,28 @@
 #include "libft/libft.h"
 #include "ft_printf.h"
 
+int	*ft_reverse(int *str, int nb, int nb_nul)
+{
+	int i;
+	int *rev_str;
+	int j;
+
+	j = 0;
+	i = nb - nb_nul;
+	if (!(rev_str = (int *)malloc(sizeof(int) * i)))
+		return (0);
+	while (i > 0)
+	{
+		rev_str[j] = str[i - 1];
+		i--;
+		j++;
+	}
+//	j = 0;
+//	while (rev_str[j])
+//		printf("%d", rev_str[j++]);
+	return(rev_str);
+}
+
 int ft_exp(const char *str)
 {
 	int i;
@@ -34,20 +56,12 @@ int ft_exp(const char *str)
 	return (exp_ten - 1023);
 }
 
-//int ft_get_integer_2(int *str, int exp, int *mas_int)
-//{
-//	int mas[5000];
-//	int i;
-//
-//	i = 0;
-//	while (exp > 0)
-//	{
-//
-//		i++;
-//	}
-//}
+int *ft_division(int *integer, int divider)
+{
 
-int ft_get_int(int **integer, int *str, int exp)
+}
+
+int ft_get_int(int *integer, int *str, int exp, int nb)
 {
 	int j;
 	int sum[5000];
@@ -58,13 +72,14 @@ int ft_get_int(int **integer, int *str, int exp)
 	res = 0;
 	while (i < 5000)
 		sum[i++] = 0;// check
-	while (j <= exp - 1023)
+	while (j <= exp)
 	{
 		i = 0;
 		if (str[j] == 0)
 			j++;
-		while (integer[j][i] != 0 || integer[j][i + 1] != 0)
-			sum[i] += integer[j][i];
+		else
+			while (i <= nb)
+				sum[i++] += integer[i];
 		i = 0;
 		while (integer[j][i] != 0 || integer[j][i + 1] != 0)
 		{
@@ -74,31 +89,31 @@ int ft_get_int(int **integer, int *str, int exp)
 				sum[i] %= 10;
 				sum[i + 1] += res / 10;
 			}
-			j++;
+			i++;
 		}
+		j++;
 	}
+	i = 0;
+	while (i < 100)
+		printf("%d", sum[i++]);
+	return (0);
 }
 
 int ft_get_integer(int *str, int exp, char **s)
 {
 	int mas_int[5000];
-	int **integ;
 	int j;
 	int i;
 	int res;
 
 	j = 0;
 	i = exp;
+	res = 0;
 	while (j < 5000)
 		mas_int[j++] = 0;
-	res = 0;
 	mas_int[0] = 1;
-	if (!(integ = (int **)malloc(sizeof(int *) * (exp - 1023))))
-		return (0);
 	while (i > 0)
 	{
-		if (!(integ[i] = (int *)malloc(sizeof(int) * 5000)))
-			return (0);
 		j = 0;
 		while (mas_int[j] != 0 || mas_int[j + 1] != 0)
 			mas_int[j++] *= 2;
@@ -113,16 +128,9 @@ int ft_get_integer(int *str, int exp, char **s)
 			}
 			j++;
 		}
-		integ[i][0] = 1;
-		while (j > 0)
-			integ[i--][j] = mas_int[j--];
-		j = 0;//удалить
-		while (j < 99)//удалить
-			printf("%d", mas_int[j++]);
-		//i--;//оставить все остальное убрать
-		printf("\n");//удалить
+		i--;
 	}
-	ft_get_int(integ, str, exp);
+	ft_get_int(*ft_reverse(mas_int, 5000, 5000 - j), mantissa, exp, 5000 - j);
 	return (0);
 }
 
@@ -162,7 +170,7 @@ int	ft_get_decimals(int *str, int precision, char **s)
 		i--;//оставить все остальное убрать
 		printf("\n");
 	}
-		return (0);
+	return (0);
 }
 
 int ft_mantissa(const char *str, int precision)
@@ -222,8 +230,8 @@ int main()
 	double nb;
 	int precision;
 
-	nb = 10.995544;
-	precision = 10;
+	nb = 16.995544;
+	precision = 2;
 	printf("%.10f\n", nb);
 	ft_float(nb, precision);
 }
